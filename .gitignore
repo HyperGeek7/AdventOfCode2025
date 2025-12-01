@@ -1,0 +1,5 @@
+*.txt
+.mypy_cache
+.venv
+rust
+__pycache__
