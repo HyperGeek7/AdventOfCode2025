@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+#pyright: strict, reportImplicitRelativeImport=false
 
 from common import load_input
 
