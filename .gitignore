@@ -1,5 +1,5 @@
 *.txt
 .mypy_cache
 .venv
-rust
+rust/target
 __pycache__

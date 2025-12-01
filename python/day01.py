@@ -57,7 +57,7 @@ def part2(input: list[str]):
 
 
 def main():
-    input = load_input('day01.input.txt')
+    input = load_input('../input_files/day01.input.txt')
     print(part1(input))
     print(part2(input))
 
