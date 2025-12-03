@@ -23,15 +23,16 @@ fn make_sorted_line(line: &&str) -> Vec<(usize, u32)> {
         .map(|(pos, char)| (pos, char.to_digit(10).unwrap()))
         .collect();
 
-    sorted_values
-        .sort_by(
-            compare_elements
-        );
+    sorted_values.sort_by(compare_elements);
 
     sorted_values
 }
 
-fn highest_available(sorted_values: &Vec<(usize, u32)>, min_index: i32, max_index: usize) -> (usize, u32) {
+fn highest_available(
+    sorted_values: &Vec<(usize, u32)>,
+    min_index: Option<usize>,
+    max_index: usize,
+) -> (usize, u32) {
     // As we assemble our number, we consistently want to pull the highest number
     // that matches the following criteria:
     // 1. It must come after the last number we selected
@@ -39,17 +40,11 @@ fn highest_available(sorted_values: &Vec<(usize, u32)>, min_index: i32, max_inde
     // This is fairly simple to write into a filter function
     // and then just pop off the highest value that remains.
 
-    // min_index should really be an Option<usize> that just omits
-    // the condition entirely if it's None, but I couldn't think of
-    // how to do it this morning, so we get this weird casting nonsense
-    // instead.
-
     *(sorted_values
         .iter()
-        .filter(|(pos, _char)| *pos as i32 > min_index && *pos <= max_index)
+        .filter(|(pos, _char)| min_index.is_none_or(|x| *pos > x) && *pos <= max_index)
         .nth(0)
-        .unwrap()
-    )
+        .unwrap())
 }
 
 fn part1(lines: &Vec<&str>) -> Result<u32> {
@@ -68,8 +63,7 @@ fn part1(lines: &Vec<&str>) -> Result<u32> {
         // but that only works if it's not the last character in the string.
         if sorted_values[0].0 < line.len() - 1 {
             (max_index, max_value) = sorted_values[0];
-        }
-        else {
+        } else {
             (max_index, max_value) = sorted_values[1];
         }
 
@@ -98,7 +92,7 @@ fn part2(lines: &Vec<&str>) -> Result<u64> {
 
         //println!("Processing line {}", line);
         let mut this_line_value = 0;
-        let mut last_digit_index = -1;
+        let mut last_digit_index = None;
 
         let sorted_values = make_sorted_line(line);
 
@@ -106,7 +100,7 @@ fn part2(lines: &Vec<&str>) -> Result<u64> {
             let max_index = line.len() - digit_count;
             let this_digit;
             let next_highest = highest_available(&sorted_values, last_digit_index, max_index);
-            (last_digit_index, this_digit) = (next_highest.0 as i32, next_highest.1 as u64);
+            (last_digit_index, this_digit) = (Some(next_highest.0), next_highest.1 as u64);
             digit_count -= 1;
             this_line_value += this_digit * (10_u64.pow(digit_count as u32));
         }
@@ -120,9 +114,7 @@ fn part2(lines: &Vec<&str>) -> Result<u64> {
 
 fn main() -> Result<()> {
     let input_string = fs::read_to_string(absolute("../input_files/day03.input.txt")?)?;
-    let input_lines: Vec<&str> = input_string
-        .lines()
-        .collect();
+    let input_lines: Vec<&str> = input_string.lines().collect();
 
     println!("{}", part1(&input_lines)?);
     println!("{}", part2(&input_lines)?);
