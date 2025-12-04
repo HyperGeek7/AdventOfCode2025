@@ -30,8 +30,6 @@ fn find_removables(floor_map: &HashMap<(i32, i32), char>) -> Vec<(i32, i32, usiz
     floor_map
         // Iterate over all the key-value pairs
         .iter()
-        // Discard any spaces that aren't occupied
-        .filter(|((_, _), char)| **char == '@')
         // Count how many rolls each roll is touching, which is its own (somewhat involved) function.
         .map(|((x, y), _)| { 
             (
@@ -53,9 +51,7 @@ fn find_removables(floor_map: &HashMap<(i32, i32), char>) -> Vec<(i32, i32, usiz
             )
         })
         // So that terrifying map() call has transformed our original grid of characters into a
-        // sequence of numbers that indicates how many rolls each tile is touching.
-        // We've lost the actual grid component along the way, but that doesn't matter for
-        // this particular puzzle.
+        // grid of numbers that indicates how many rolls each tile is touching.
         // That done, we just discard any tile with more than 3 occupied neighbors...
         .filter(|(_, _, occupied_slots)| *occupied_slots < 4)
         .collect()
