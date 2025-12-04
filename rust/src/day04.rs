@@ -31,23 +31,18 @@ fn find_removables(floor_map: &HashMap<(i32, i32), char>) -> Vec<(i32, i32, usiz
         // Iterate over all the key-value pairs
         .iter()
         // Count how many rolls each roll is touching, which is its own (somewhat involved) function.
-        .map(|((x, y), _)| { 
+        .map(|((x, y), _)| {
             (
-            *x,
-            *y,
-            // Get the coordinates of all the surrounding "tiles" by way of the cartesian product.
-            iproduct!((x - 1)..(x + 2), (y - 1)..(y + 2))
-                // The cartesian product also includes the middle tile itself, so discard that.
-                .filter(|(offset_x, offset_y)| offset_x != x || offset_y != y)
-                // Discard any of the surrounding tiles that don't contain another roll
-                .filter_map(|(offset_x, offset_y)| {
-                    match floor_map.get(&(offset_x, offset_y)).unwrap_or(&'.') {
-                        '@' => Some(1),
-                        _ => None,
-                    }
-                })
-                // And count how many we have left
-                .count()
+                *x,
+                *y,
+                // Get the coordinates of all the surrounding "tiles" by way of the cartesian product.
+                iproduct!((x - 1)..(x + 2), (y - 1)..(y + 2))
+                    // The cartesian product also includes the middle tile itself, so discard that.
+                    .filter(|(offset_x, offset_y)| offset_x != x || offset_y != y)
+                    // Discard any of the surrounding tiles that don't contain another roll
+                    .filter(|(offset_x, offset_y)| floor_map.contains_key(&(*offset_x, *offset_y)))
+                    // And count how many we have left
+                    .count(),
             )
         })
         // So that terrifying map() call has transformed our original grid of characters into a
@@ -55,7 +50,6 @@ fn find_removables(floor_map: &HashMap<(i32, i32), char>) -> Vec<(i32, i32, usiz
         // That done, we just discard any tile with more than 3 occupied neighbors...
         .filter(|(_, _, occupied_slots)| *occupied_slots < 4)
         .collect()
-
 }
 
 fn part1(input_lines: &Vec<&str>) -> Result<usize> {
