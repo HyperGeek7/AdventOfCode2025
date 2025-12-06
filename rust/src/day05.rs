@@ -5,14 +5,13 @@ use anyhow::Result;
 fn parse_input(input_lines: &Vec<&str>) -> Result<(Vec<(u64, u64)>, Vec<u64>)> {
     let break_line_no = input_lines
         .iter()
-        .position(|&x| x == "")
+        .position(|&x| x.is_empty())
         .expect("No blank line found in input!");
     let (range_lines, ingredient_lines) = input_lines.split_at(break_line_no);
 
     let fresh_ranges = range_lines
         .iter()
         .map(|&x| x.split_once('-').expect("Range line had no dash!"))
-        //.map(|(low, high)| (low.parse::<u64>().unwrap())..(high.parse::<u64>().unwrap() + 1))
         .map(|(low, high)| (low.parse::<u64>().unwrap(), high.parse::<u64>().unwrap()))
         .collect();
 
@@ -67,13 +66,12 @@ fn part2(input_lines: &Vec<&str>) -> Result<u64> {
 
             if let Some(overlapping_range) = these_ranges
                 .iter()
-                .filter(|&&x| {
+                .find(|&&x| {
                     x != range
                         && !already_handled.contains(&x)
                         && ((x.0 <= range.0 && x.1 >= range.0)
                             || (x.0 <= range.1 && x.1 >= range.1))
                 })
-                .nth(0)
             {
                 /*
                 println!(
@@ -90,11 +88,11 @@ fn part2(input_lines: &Vec<&str>) -> Result<u64> {
                 already_handled.insert(range);
                 already_handled.insert(*overlapping_range);
                 keep_looping = true;
-
-                continue;
             }
-            already_handled.insert(range);
-            next_ranges.insert(range);
+            else {
+                already_handled.insert(range);
+                next_ranges.insert(range);
+            }
         }
 
         these_ranges = next_ranges;
