@@ -61,7 +61,7 @@ fn vertical_parse(input_lines: &Vec<&str>) -> (Vec<Vec<u64>>, Vec<String>) {
             // so to read a single column, we just fetch the i-th character in each line.
             input_lines
                 .iter()
-                .map(|&line| line.chars().nth(i).unwrap_or(' '))
+                .filter_map(|&line| line.chars().nth(i))
                 // It's easier to just get the operators after the fact, so discard any character that isn't
                 // a valid base 10 digit. This also effectively trims the whitespace.
                 .filter_map(|x| match x.is_ascii_digit() {
@@ -76,7 +76,7 @@ fn vertical_parse(input_lines: &Vec<&str>) -> (Vec<Vec<u64>>, Vec<String>) {
         // There will be at least one blank column in between each "group" of columns,
         // so we can use split() to chunk them out.
         .split(|x| x.is_empty())
-        // We now have a vector of slices, which is a little awkward to work with,
+        // We now have an iterator of slices, which is a little awkward to work with,
         // but each element of those slices is a string containing a valid number.
         // We can use a nested map call to parse each of them into a numeric type,
         // convert the slice to a Vec for good measure, and then collect the whole mess.
