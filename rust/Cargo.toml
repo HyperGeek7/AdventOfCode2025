@@ -7,6 +7,7 @@ edition = "2024"
 anyhow = "1.0.100"
 fancy-regex = "0.16.2"
 itertools = "0.14.0"
+microlp = "0.2.11"
 
 [[bin]]
 name = "day01"
@@ -39,3 +40,7 @@ path = "src/day07.rs"
 [[bin]]
 name = "day09"
 path = "src/day09.rs"
+
+[[bin]]
+name = "day10"
+path = "src/day10.rs"
